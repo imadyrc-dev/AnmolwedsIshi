@@ -434,6 +434,20 @@
         const bgMusic = document.getElementById("bgMusic");
         const muteBtn = document.getElementById("muteBtn");
         let musicMuted = false;
+        let musicStarted = false;
+
+        const startMusic = () => {
+            if (musicStarted) return;
+            musicStarted = true;
+
+            bgMusic.currentTime = 0;
+            bgMusic.play().catch(() => {
+                /* Autoplay-with-sound can still be blocked on some
+                   browsers even with a gesture; fail silently and let
+                   the visitor use the mute/unmute button to retry. */
+            });
+            muteBtn.style.display = "flex";
+        };
 
         muteBtn.addEventListener("click", () => {
             musicMuted = !musicMuted;
@@ -446,16 +460,7 @@
 
         playBtn.addEventListener("click", () => {
             video.play();
-
-            // start the background music in the same user gesture
-            bgMusic.currentTime = 0;
-            bgMusic.play().catch(() => {
-                /* Autoplay-with-sound can still be blocked on some
-                   browsers even with a gesture; fail silently and let
-                   the visitor use the mute/unmute button to retry. */
-            });
-            muteBtn.style.display = "flex";
-
+            startMusic();
             overlay.classList.add("hide");
         });
 
