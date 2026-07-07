@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anmol & Ishi</title>
+
+    <style>
+        /* =========================================================
+           Reset
+        ========================================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* =========================================================
+           Design tokens
+        ========================================================= */
+        :root {
+            --color-bg-cream: #fffaf7;
+            --color-gold: #D4AF37;
+            --color-gold-light: #F8E8A0;
+            --color-gold-dark: #E7C95B;
+            --color-script: #F8E7C5;
+            --overlay-dark: rgba(0, 0, 0, .45);
+
+            --transition-reveal: 1.2s ease;
+            --transition-fade: 1.5s ease;
+        }
+
+        section {
+            width: 100%;
+            height: 100vh;
+        }
+
+        /* Generic "reveal on scroll" section */
+        .next-section {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(80px);
+            transition: opacity var(--transition-reveal), transform var(--transition-reveal);
+        }
+
+        .next-section.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================================
+           Hero section
+        ========================================================= */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .hero video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1);
+        }
+
+        .hero video.playing {
+            animation: zoomVideo 12s linear forwards;
+        }
+
+        @keyframes zoomVideo {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.12);
+            }
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: var(--overlay-dark);
+            display: flex;
+            justify-content: end;
+            align-items: center;
+            flex-direction: column;
+            color: #fff;
+            transition: opacity .4s;
+        }
+
+        .overlay.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .overlay h1 {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+        .overlay p {
+            font-family: 'Great Vibes', cursive;
+            font-size: 32px;
+            font-weight: 400;
+            color: var(--color-script);
+            letter-spacing: 1px;
+            margin-top: 30px;
+            margin-bottom: 70px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.35);
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            background: #fff;
+            backdrop-filter: blur(10px);
+            color: #ff0000;
+            font-size: 25px;
+            transition: .3s;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+            background: #fff;
+            color: #000;
+        }
+
+        /* Mute toggle for background music */
+        .mute-btn {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            color: #fff;
+            font-size: 18px;
+            z-index: 50;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(6px);
+            transition: transform .2s, background .2s;
+        }
+
+        .mute-btn:hover {
+            transform: scale(1.08);
+            background: rgba(0, 0, 0, 0.65);
+        }
+
+        /* =========================================================
+           Image-reveal section
+        ========================================================= */
+        .next-section {
+            background: var(--color-bg-cream);
+        }
+
+        .container-fluid {
+            width: 100%;
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .right {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .right img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            object-fit: cover;
+            display: block;
+        }
+
+        .next-section.show .left,
+        .next-section.show .right {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .right {
+                order: -1;
+            }
+
+            .right img {
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+            }
+        }
+
+        /* =========================================================
+           Scratch card section
+        ========================================================= */
+        .scratch-section {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('gate.png');
+            background-size: cover;
+            padding: 0;
+        }
+
+        .scratch-card {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            box-shadow: none;
+
+            /* ---- background image (was an <img class="main-img">), full-bleed cover ---- */
+            background-image: url('Creative 2.gif');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .heart-backdrop {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            filter: drop-shadow(0 16px 30px rgba(0, 0, 0, 0.18));
+        }
+
+        .save-date {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #9B1B3F;
+            /* elegant contrasting rose-maroon for a wedding look */
+            text-align: center;
+            z-index: 2;
+            pointer-events: none;
+            padding: 0 12px;
+            word-break: break-word;
+        }
+
+        .save-date h2,
+        .save-date h3,
+        .save-date h1,
+        .save-date p,
+        .save-date h4 {
+            margin: 6px 0;
+            line-height: 1.1;
+        }
+
+
+
+        .save-date h3 {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(24px, 5vw, 42px);
+            color: #D4AF37;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-align: center;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 8px;
+        }
+
+        .save-date h5 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(12px, 2.8vw, 18px);
+            color: #8B5E3C;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+
+        #scratchCanvas {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            touch-action: none;
+            /* stop page scroll while scratching on mobile */
+            cursor: pointer;
+        }
+
+        .scratch-hint {
+            position: absolute;
+            bottom: 22px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 6;
+            color: #fff;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: .85;
+            pointer-events: none;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, .5);
+            animation: pulseHint 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulseHint {
+
+            0%,
+            100% {
+                opacity: .5;
+            }
+
+            50% {
+                opacity: .95;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============ Hero ============ -->
+    <section class="hero">
+        <video id="introVideo" preload="auto" playsinline>
+            <source src="Palace_gate_opens,_couple_walks_202607061041.mp4" type="video/mp4">
+        </video>
+
+        <div class="overlay" id="overlay">
+            <button class="play-btn" id="playBtn">💗</button>
+            <p>Open Invitation</p>
+        </div>
+    </section>
+
+    <!-- ============ Background music ============ -->
+    <audio id="bgMusic" src="wedding-music.mp3" loop preload="auto"></audio>
+    <button class="mute-btn" id="muteBtn" aria-label="Mute music"></button>
+
+    <!-- ============ Save the Date (scratch card) ============ -->
+    <section class="scratch-section" id="nextSection">
+        <div class="scratch-card">
+
+            <svg class="heart-backdrop" id="heartBackdrop" preserveAspectRatio="none">
+                <path id="heartBackdropPath" fill="#ffffff"></path>
+            </svg>
+
+            <div class="save-date" id="saveDate">
+                <h3>Save the Date</h3>
+
+                <h5>25th to 27th October <br> 2026</h5>
+
+            </div>
+
+            <canvas id="scratchCanvas"></canvas>
+            <div class="scratch-hint" id="scratchHint">Scratch the heart ✨</div>
+        </div>
+    </section>
+
+    <script>
+        /* =========================================================
+           Scroll-lock helpers
+           Keeps the page pinned to the top on refresh, then locks
+           scroll-up once the reveal section has been shown.
+        ========================================================= */
+        if ("scrollRestoration" in history) {
+            history.scrollRestoration = "manual";
+        }
+        window.addEventListener("beforeunload", () => window.scrollTo(0, 0));
+        window.addEventListener("load", () => window.scrollTo(0, 0));
+
+        let lockScroll = false;
+
+        window.addEventListener("scroll", () => {
+            if (lockScroll && window.scrollY < window.innerHeight) {
+                window.scrollTo({ top: window.innerHeight, behavior: "instant" });
+            }
+        });
+
+        window.addEventListener("wheel", (e) => {
+            if (lockScroll && e.deltaY < 0) e.preventDefault();
+        }, { passive: false });
+
+        let touchStartY = 0;
+        window.addEventListener("touchstart", (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: false });
+
+        window.addEventListener("touchmove", (e) => {
+            if (!lockScroll) return;
+            if (e.touches[0].clientY > touchStartY) e.preventDefault();
+        }, { passive: false });
+
+        /* =========================================================
+           Hero video → reveal next section
+        ========================================================= */
+        const video = document.getElementById("introVideo");
+        const playBtn = document.getElementById("playBtn");
+        const overlay = document.getElementById("overlay");
+        const nextSection = document.getElementById("nextSection");
+        const hero = document.querySelector(".hero");
+
+        /* Background music: starts the moment the intro video is
+           started, since browsers require a user gesture (the tap on
+           playBtn) before any audio/video can play with sound. */
+        const bgMusic = document.getElementById("bgMusic");
+        const muteBtn = document.getElementById("muteBtn");
+        let musicMuted = false;
+
+        muteBtn.addEventListener("click", () => {
+            musicMuted = !musicMuted;
+            bgMusic.muted = musicMuted;
+            muteBtn.textContent = musicMuted ? "🔇" : "🔊";
+        });
+
+        const REVEAL_DELAY_MS = 1500;   // wait for hero fade-out
+        const SHOW_CLASS_DELAY_MS = 600; // wait for scroll-into-view
+
+        playBtn.addEventListener("click", () => {
+            video.play();
+
+            // start the background music in the same user gesture
+            bgMusic.currentTime = 0;
+            bgMusic.play().catch(() => {
+                /* Autoplay-with-sound can still be blocked on some
+                   browsers even with a gesture; fail silently and let
+                   the visitor use the mute/unmute button to retry. */
+            });
+            muteBtn.style.display = "flex";
+
+            overlay.classList.add("hide");
+        });
+
+        video.addEventListener("ended", () => {
+            hero.style.transition = "opacity 1.5s ease";
+            hero.style.opacity = "0";
+
+            setTimeout(() => {
+                nextSection.scrollIntoView({ behavior: "smooth" });
+
+                setTimeout(() => {
+                    nextSection.classList.add("show");
+                    lockScroll = true;
+                }, SHOW_CLASS_DELAY_MS);
+            }, REVEAL_DELAY_MS);
+        });
+
+        /* =========================================================
+           Scratch card — perfect heart shape
+        ========================================================= */
+        const canvas = document.getElementById("scratchCanvas");
+        const ctx = canvas.getContext("2d");
+        const card = document.querySelector(".scratch-card");
+        const scratchHint = document.getElementById("scratchHint");
+        const heartBackdrop = document.getElementById("heartBackdrop");
+        const heartBackdropPath = document.getElementById("heartBackdropPath");
+        const saveDate = document.getElementById("saveDate");
+
+        const SCRATCH_RADIUS = 28;
+        const GLITTER_COUNT = 1400;
+        const REVEAL_THRESHOLD_PERCENT = 65;
+
+        let canvasWidth, canvasHeight;
+        let lastX = null;
+        let lastY = null;
+        let isDrawing = false;
+        let totalHeartPixels = 0; // opaque pixel count right after the heart is drawn
+
+        // Returns the point list for a mathematically "perfect" heart
+        // outline (classic parametric heart curve), centered at (cx, cy).
+        // Reused for both the canvas scratch layer and the white SVG
+        // backdrop so the two shapes always line up exactly.
+        function heartPoints(cx, cy, scale) {
+            const steps = 200;
+            const pts = [];
+            for (let i = 0; i <= steps; i++) {
+                const t = (i / steps) * Math.PI * 2;
+                const hx = 16 * Math.pow(Math.sin(t), 3);
+                const hy = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+                pts.push([cx + hx * scale, cy - hy * scale]); // flip: math-up is canvas-up(negative)
+            }
+            return pts;
+        }
+
+        function tracePathOnCanvas(pts) {
+            ctx.beginPath();
+            pts.forEach((p, i) => (i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1])));
+            ctx.closePath();
+        }
+
+        function pointsToSvgPath(pts) {
+            return pts.map((p, i) => `${i === 0 ? "M" : "L"}${p[0].toFixed(2)},${p[1].toFixed(2)}`).join(" ") + " Z";
+        }
+
+        function drawScratchLayer() {
+            canvasWidth = canvas.width = card.offsetWidth;
+            canvasHeight = canvas.height = card.offsetHeight;
+
+            ctx.globalCompositeOperation = "source-over";
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+            // heart is smaller and positioned nearer the bottom of the image
+            const cx = canvasWidth / 2;
+            const cy = canvasHeight * 0.72;
+            const scale = Math.min(canvasWidth / 28, canvasHeight / 26) * 0.5;
+
+            const pts = heartPoints(cx, cy, scale);
+
+            // gold gradient fill — flat and clean, no drop shadow
+            tracePathOnCanvas(pts);
+            const grad = ctx.createRadialGradient(cx, cy - scale * 6, scale * 2, cx, cy, scale * 20);
+            grad.addColorStop(0, "#F8E8A0");
+            grad.addColorStop(0.55, "#D4AF37");
+            grad.addColorStop(1, "#B8912A");
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // glitter, clipped so it only shows up inside the heart
+            ctx.save();
+            tracePathOnCanvas(pts);
+            ctx.clip();
+            const left = cx - scale * 17;
+            const top = cy - scale * 18;
+            const w = scale * 34;
+            const h = scale * 26;
+            for (let i = 0; i < GLITTER_COUNT; i++) {
+                ctx.fillStyle = Math.random() > 0.5 ? "#FFF6D9" : "#E7C95B";
+                ctx.globalAlpha = 0.5 + Math.random() * 0.5;
+                ctx.beginPath();
+                ctx.arc(left + Math.random() * w, top + Math.random() * h, Math.random() * 1.6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+            ctx.restore();
+
+            // crisp gold outline so the heart edge reads clean
+            tracePathOnCanvas(pts);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#FFF6D9";
+            ctx.stroke();
+
+            // snapshot how many pixels are opaque right now — this is
+            // our 100% baseline for the "scratched" progress check
+            const data = ctx.getImageData(0, 0, canvasWidth, canvasHeight).data;
+            let count = 0;
+            for (let i = 3; i < data.length; i += 4) {
+                if (data[i] > 0) count++;
+            }
+            totalHeartPixels = count || 1;
+
+            // ---- sync the white heart-shaped backdrop + text to the
+            // exact same shape/position, so scratching reveals a clean
+            // white heart with readable text instead of the busy photo ----
+            heartBackdrop.setAttribute("viewBox", `0 0 ${canvasWidth} ${canvasHeight}`);
+            heartBackdropPath.setAttribute("d", pointsToSvgPath(pts));
+
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            pts.forEach(([x, y]) => {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+            });
+            const textPadding = 18;
+            saveDate.style.left = minX + textPadding + "px";
+            saveDate.style.top = minY + textPadding + "px";
+            saveDate.style.width = (maxX - minX - textPadding * 2) + "px";
+            saveDate.style.height = (maxY - minY - textPadding * 2) + "px";
+        }
+
+        drawScratchLayer();
+
+        let resizeTimeout;
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (canvas.isConnected) drawScratchLayer();
+            }, 150);
+        });
+
+        function scratchAt(x, y) {
+            ctx.globalCompositeOperation = "destination-out";
+            ctx.beginPath();
+            ctx.arc(x, y, SCRATCH_RADIUS, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Interpolates between the last point and the new one so fast
+        // swipes don't leave unerased gaps.
+        function scratchStroke(x, y) {
+            if (lastX === null) {
+                scratchAt(x, y);
+            } else {
+                const dist = Math.hypot(x - lastX, y - lastY);
+                const steps = Math.max(1, Math.ceil(dist / 8));
+                for (let i = 0; i <= steps; i++) {
+                    const t = i / steps;
+                    scratchAt(lastX + (x - lastX) * t, lastY + (y - lastY) * t);
+                }
+            }
+            lastX = x;
+            lastY = y;
+        }
+
+        function getRelativePos(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+
+        function startScratch(x, y) {
+            isDrawing = true;
+            lastX = x;
+            lastY = y;
+            scratchAt(x, y);
+            if (scratchHint) scratchHint.style.opacity = "0";
+            checkScratchProgress();
+        }
+
+        function endScratch() {
+            isDrawing = false;
+            lastX = null;
+            lastY = null;
+        }
+
+        // Mouse events
+        canvas.addEventListener("mousedown", (e) => {
+            const p = getRelativePos(e.clientX, e.clientY);
+            startScratch(p.x, p.y);
+        });
+
+        canvas.addEventListener("mouseup", endScratch);
+        canvas.addEventListener("mouseleave", endScratch);
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (!isDrawing) return;
+            const p = getRelativePos(e.clientX, e.clientY);
+            scratchStroke(p.x, p.y);
+            checkScratchProgress();
+        });
+
+        // Touch events
+        canvas.addEventListener("touchstart", (e) => {
+            const t = e.touches[0];
+            const p = getRelativePos(t.clientX, t.clientY);
+            startScratch(p.x, p.y);
+        }, { passive: false });
+
+        canvas.addEventListener("touchend", endScratch);
+
+        canvas.addEventListener("touchmove", (e) => {
+            e.preventDefault();
+            if (!isDrawing) return;
+            const t = e.touches[0];
+            const p = getRelativePos(t.clientX, t.clientY);
+            scratchStroke(p.x, p.y);
+            checkScratchProgress();
+        }, { passive: false });
+
+        function checkScratchProgress() {
+            const pixels = ctx.getImageData(0, 0, canvasWidth, canvasHeight).data;
+            let remainingOpaque = 0;
+
+            for (let i = 3; i < pixels.length; i += 4) {
+                if (pixels[i] > 0) remainingOpaque++;
+            }
+
+            const percentCleared = 100 - (remainingOpaque / totalHeartPixels) * 100;
+
+            if (percentCleared > REVEAL_THRESHOLD_PERCENT) {
+                canvas.style.transition = ".8s";
+                canvas.style.opacity = "0";
+                setTimeout(() => canvas.remove(), 800);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
