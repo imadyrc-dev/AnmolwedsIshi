@@ -387,6 +387,11 @@
     </section>
 
     <script>
+
+        if (!sessionStorage.getItem("pageRefreshed")) {
+            sessionStorage.setItem("pageRefreshed", "true");
+            location.reload();
+        }
         /* =========================================================
            Scroll-lock helpers
            Keeps the page pinned to the top on refresh, then locks
