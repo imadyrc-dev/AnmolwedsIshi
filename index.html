@@ -152,7 +152,6 @@
             border: none;
             cursor: pointer;
             background: rgba(0, 0, 0, 0.45);
-            /* was missing */
             color: #fff;
             font-size: 18px;
             z-index: 50;
@@ -245,7 +244,6 @@
             border-radius: 0;
             box-shadow: none;
 
-            /* ---- background image (was an <img class="main-img">), full-bleed cover ---- */
             background-image: url('newimg.png');
             background-size: cover;
             background-position: center;
@@ -267,7 +265,6 @@
             align-items: center;
             flex-direction: column;
             color: #9B1B3F;
-            /* elegant contrasting rose-maroon for a wedding look */
             text-align: center;
             z-index: 2;
             pointer-events: none;
@@ -280,11 +277,8 @@
         .save-date h1,
         .save-date p,
         .save-date h4 {
-            /* margin: 6px 0; */
             line-height: 1.1;
         }
-
-
 
         .save-date h3 {
             font-family: 'Great Vibes', cursive;
@@ -302,18 +296,15 @@
             font-size: 10px;
             color: #8B5E3C;
             text-transform: uppercase;
-            /* letter-spacing: 3px; */
             font-weight: 600;
             text-align: center;
         }
-
 
         #scratchCanvas {
             position: absolute;
             inset: 0;
             z-index: 5;
             touch-action: none;
-            /* stop page scroll while scratching on mobile */
             cursor: pointer;
         }
 
@@ -394,8 +385,6 @@
         }
         /* =========================================================
            Scroll-lock helpers
-           Keeps the page pinned to the top on refresh, then locks
-           scroll-up once the reveal section has been shown.
         ========================================================= */
         if ("scrollRestoration" in history) {
             history.scrollRestoration = "manual";
@@ -434,9 +423,15 @@
         const nextSection = document.getElementById("nextSection");
         const hero = document.querySelector(".hero");
 
-        /* Background music: starts the moment the intro video is
-           started, since browsers require a user gesture (the tap on
-           playBtn) before any audio/video can play with sound. */
+        // Video should NEVER have sound — enforce this in JS too,
+        // not just via the HTML "muted" attribute, so it can't be
+        // accidentally unmuted by anything else on the page.
+        video.muted = true;
+        video.volume = 0;
+
+        /* Background music: starts the exact moment the intro video
+           starts playing (tap on playBtn), since browsers require a
+           user gesture before any audio/video can play with sound. */
         const bgMusic = document.getElementById("bgMusic");
         const muteBtn = document.getElementById("muteBtn");
         let musicMuted = false;
@@ -530,9 +525,16 @@
         const SHOW_CLASS_DELAY_MS = 600; // wait for scroll-into-view
 
         playBtn.addEventListener("click", () => {
+            video.muted = true; // extra safety: guaranteed silent
             video.play();
-            startMusic();
             overlay.classList.add("hide");
+        });
+
+        // Music starts the instant the video actually begins playing
+        // (fires on any play — tap, autoplay-retry, etc.) so the two
+        // are always in sync, no matter how playback was triggered.
+        video.addEventListener("play", () => {
+            startMusic();
         });
 
         video.addEventListener("ended", () => {
@@ -545,7 +547,6 @@
                 setTimeout(() => {
                     nextSection.classList.add("show");
                     lockScroll = true;
-                    startMusic(); // safety net: make sure music is playing by the time next-section shows
                 }, SHOW_CLASS_DELAY_MS);
             }, REVEAL_DELAY_MS);
         });
@@ -582,12 +583,8 @@
         let lastX = null;
         let lastY = null;
         let isDrawing = false;
-        let totalHeartPixels = 0; // opaque pixel count right after the heart is drawn
+        let totalHeartPixels = 0;
 
-        // Returns the point list for a mathematically "perfect" heart
-        // outline (classic parametric heart curve), centered at (cx, cy).
-        // Reused for both the canvas scratch layer and the white SVG
-        // backdrop so the two shapes always line up exactly.
         function heartPoints(cx, cy, scale) {
             const steps = 200;
             const pts = [];
@@ -595,7 +592,7 @@
                 const t = (i / steps) * Math.PI * 2;
                 const hx = 16 * Math.pow(Math.sin(t), 3);
                 const hy = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-                pts.push([cx + hx * scale, cy - hy * scale]); // flip: math-up is canvas-up(negative)
+                pts.push([cx + hx * scale, cy - hy * scale]);
             }
             return pts;
         }
@@ -617,14 +614,12 @@
             ctx.globalCompositeOperation = "source-over";
             ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-            // heart is smaller and positioned nearer the bottom of the image
             const cx = canvasWidth / 2;
             const cy = canvasHeight * 0.72;
             const scale = Math.min(canvasWidth / 28, canvasHeight / 26) * 0.5;
 
             const pts = heartPoints(cx, cy, scale);
 
-            // gold gradient fill — flat and clean, no drop shadow
             tracePathOnCanvas(pts);
             const grad = ctx.createRadialGradient(cx, cy - scale * 6, scale * 2, cx, cy, scale * 20);
             grad.addColorStop(0, "#F8E8A0");
@@ -633,7 +628,6 @@
             ctx.fillStyle = grad;
             ctx.fill();
 
-            // glitter, clipped so it only shows up inside the heart
             ctx.save();
             tracePathOnCanvas(pts);
             ctx.clip();
@@ -651,14 +645,11 @@
             ctx.globalAlpha = 1;
             ctx.restore();
 
-            // crisp gold outline so the heart edge reads clean
             tracePathOnCanvas(pts);
             ctx.lineWidth = 2;
             ctx.strokeStyle = "#FFF6D9";
             ctx.stroke();
 
-            // snapshot how many pixels are opaque right now — this is
-            // our 100% baseline for the "scratched" progress check
             const data = ctx.getImageData(0, 0, canvasWidth, canvasHeight).data;
             let count = 0;
             for (let i = 3; i < data.length; i += 4) {
@@ -666,9 +657,6 @@
             }
             totalHeartPixels = count || 1;
 
-            // ---- sync the white heart-shaped backdrop + text to the
-            // exact same shape/position, so scratching reveals a clean
-            // white heart with readable text instead of the busy photo ----
             heartBackdrop.setAttribute("viewBox", `0 0 ${canvasWidth} ${canvasHeight}`);
             heartBackdropPath.setAttribute("d", pointsToSvgPath(pts));
 
@@ -703,8 +691,6 @@
             ctx.fill();
         }
 
-        // Interpolates between the last point and the new one so fast
-        // swipes don't leave unerased gaps.
         function scratchStroke(x, y) {
             if (lastX === null) {
                 scratchAt(x, y);
@@ -740,7 +726,6 @@
             lastY = null;
         }
 
-        // Mouse events
         canvas.addEventListener("mousedown", (e) => {
             const p = getRelativePos(e.clientX, e.clientY);
             startScratch(p.x, p.y);
@@ -756,7 +741,6 @@
             checkScratchProgress();
         });
 
-        // Touch events
         canvas.addEventListener("touchstart", (e) => {
             const t = e.touches[0];
             const p = getRelativePos(t.clientX, t.clientY);
