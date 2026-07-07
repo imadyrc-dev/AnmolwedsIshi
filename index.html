@@ -240,7 +240,7 @@
             position: relative;
             overflow: hidden;
             width: 100%;
-            height: 100%;
+            height: 95%;
             border-radius: 0;
             box-shadow: none;
 
@@ -282,7 +282,7 @@
 
         .save-date h3 {
             font-family: 'Great Vibes', cursive;
-            font-size: clamp(24px, 5vw, 42px);
+            font-size: 30px;
             color: #D4AF37;
             font-weight: 400;
             letter-spacing: 1px;
@@ -293,7 +293,7 @@
 
         .save-date h5 {
             font-family: 'Cinzel', serif;
-            font-size: 10px;
+            font-size: 15px !important;
             color: #8B5E3C;
             text-transform: uppercase;
             font-weight: 600;
@@ -358,7 +358,7 @@
     <button class="mute-btn" id="muteBtn" aria-label="Mute music"></button>
 
     <!-- ============ Save the Date (scratch card) ============ -->
-    <section class="scratch-section" id="nextSection">
+    <section class="scratch-section next-section" id="nextSection">
         <div class="scratch-card">
 
             <svg class="heart-backdrop" id="heartBackdrop" preserveAspectRatio="none">
@@ -366,14 +366,14 @@
             </svg>
 
             <div class="save-date" id="saveDate">
-                <h3>Save the Date</h3>
+                <!-- <h3>Save the Date</h3> -->
 
-                <h5>25 <sup>th</sup> to 27 <sup>th</sup> October <br> 2026</h5>
+                <h5>25 <sup>th</sup> to 27 <sup>th</sup> <br> October 2026</h5>
 
             </div>
 
-            <canvas id="scratchCanvas"></canvas>
             <div class="scratch-hint" id="scratchHint">Scratch the heart ✨</div>
+            <canvas id="scratchCanvas"></canvas>
         </div>
     </section>
 
@@ -392,27 +392,8 @@
         window.addEventListener("beforeunload", () => window.scrollTo(0, 0));
         window.addEventListener("load", () => window.scrollTo(0, 0));
 
-        let lockScroll = false;
-
-        window.addEventListener("scroll", () => {
-            if (lockScroll && window.scrollY < window.innerHeight) {
-                window.scrollTo({ top: window.innerHeight, behavior: "instant" });
-            }
-        });
-
-        window.addEventListener("wheel", (e) => {
-            if (lockScroll && e.deltaY < 0) e.preventDefault();
-        }, { passive: false });
-
-        let touchStartY = 0;
-        window.addEventListener("touchstart", (e) => {
-            touchStartY = e.touches[0].clientY;
-        }, { passive: false });
-
-        window.addEventListener("touchmove", (e) => {
-            if (!lockScroll) return;
-            if (e.touches[0].clientY > touchStartY) e.preventDefault();
-        }, { passive: false });
+        /* Scroll is always free — user can scroll up/down anytime,
+           including back up to the hero after it fades out. */
 
         /* =========================================================
            Hero video → reveal next section
@@ -521,9 +502,6 @@
             muteBtn.textContent = musicMuted ? "🔇" : "🔊";
         });
 
-        const REVEAL_DELAY_MS = 1500;   // wait for hero fade-out
-        const SHOW_CLASS_DELAY_MS = 600; // wait for scroll-into-view
-
         playBtn.addEventListener("click", () => {
             video.muted = true; // extra safety: guaranteed silent
             video.play();
@@ -531,12 +509,19 @@
         });
 
         // Music starts the instant the video actually begins playing
-        // (fires on any play — tap, autoplay-retry, etc.) so the two
-        // are always in sync, no matter how playback was triggered.
+        // (tap, autoplay-retry, etc.) so the two are always in sync,
+        // no matter how playback was triggered.
         video.addEventListener("play", () => {
             startMusic();
         });
 
+        const REVEAL_DELAY_MS = 1500;   // wait for hero fade-out
+        const SHOW_CLASS_DELAY_MS = 600; // wait for scroll-into-view
+
+        /* Video end: fade the hero out, then the next section slides
+           up into view on its own. Scrolling stays completely free
+           throughout, so the user can still scroll back up to the
+           hero afterwards if they want. */
         video.addEventListener("ended", () => {
             hero.style.transition = "opacity 1.5s ease";
             hero.style.opacity = "0";
@@ -546,14 +531,13 @@
 
                 setTimeout(() => {
                     nextSection.classList.add("show");
-                    lockScroll = true;
                 }, SHOW_CLASS_DELAY_MS);
             }, REVEAL_DELAY_MS);
         });
 
         /* Fallback: if the visitor somehow reaches the scratch-card section
-           without the "ended" flow firing (e.g. skipping the video), start
-           music the moment that section becomes visible. */
+           without scrolling normally (e.g. via anchor link), start music
+           the moment that section becomes visible. */
         const musicObserver = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
