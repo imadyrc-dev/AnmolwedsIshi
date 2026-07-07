@@ -474,9 +474,23 @@
                 setTimeout(() => {
                     nextSection.classList.add("show");
                     lockScroll = true;
+                    startMusic(); // safety net: make sure music is playing by the time next-section shows
                 }, SHOW_CLASS_DELAY_MS);
             }, REVEAL_DELAY_MS);
         });
+
+        /* Fallback: if the visitor somehow reaches the scratch-card section
+           without the "ended" flow firing (e.g. skipping the video), start
+           music the moment that section becomes visible. */
+        const musicObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    startMusic();
+                }
+            });
+        }, { threshold: 0.3 });
+
+        musicObserver.observe(nextSection);
 
         /* =========================================================
            Scratch card — perfect heart shape
