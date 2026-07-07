@@ -151,6 +151,8 @@
             border-radius: 50%;
             border: none;
             cursor: pointer;
+            background: rgba(0, 0, 0, 0.45);
+            /* was missing */
             color: #fff;
             font-size: 18px;
             z-index: 50;
@@ -158,7 +160,6 @@
             align-items: center;
             justify-content: center;
             backdrop-filter: blur(6px);
-            display: none;
             transition: transform .2s, background .2s;
         }
 
@@ -442,11 +443,11 @@
 
             bgMusic.currentTime = 0;
             bgMusic.play().catch(() => {
-                /* Autoplay-with-sound can still be blocked on some
-                   browsers even with a gesture; fail silently and let
-                   the visitor use the mute/unmute button to retry. */
+                // Autoplay-with-sound can still be blocked; fail silently and let
+                // the visitor use the mute/unmute button to retry.
             });
             muteBtn.style.display = "flex";
+            muteBtn.textContent = "🔊";   // was missing — button had no icon initially
         };
 
         muteBtn.addEventListener("click", () => {
