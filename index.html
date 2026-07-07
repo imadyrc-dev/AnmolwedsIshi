@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anmol & Ishi</title>
-
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
     <style>
         /* =========================================================
            Reset
@@ -292,12 +292,20 @@
         }
 
         .save-date h5 {
-            font-family: 'Cinzel', serif;
-            font-size: 15px !important;
+            font-family: 'Great Vibes', cursive;
+            font-size: 28px !important;
             color: #8B5E3C;
-            text-transform: uppercase;
-            font-weight: 600;
+            font-weight: 400;
             text-align: center;
+            position: relative;
+            top: 0;
+            letter-spacing: 0.5px;
+        }
+
+
+        .th {
+            font-size: 14px;
+
         }
 
         #scratchCanvas {
@@ -315,13 +323,22 @@
             right: 0;
             text-align: center;
             z-index: 6;
-            color: #fff;
+
+            color: #D4AF37;
+            /* Royal Wedding Gold */
             font-size: 14px;
             letter-spacing: 2px;
             text-transform: uppercase;
-            opacity: .85;
+            font-weight: 600;
+
+            opacity: .95;
             pointer-events: none;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, .5);
+
+            text-shadow:
+                0 1px 2px rgba(255, 248, 220, 0.8),
+                0 2px 8px rgba(212, 175, 55, 0.6),
+                0 4px 12px rgba(0, 0, 0, 0.45);
+
             animation: pulseHint 1.8s ease-in-out infinite;
         }
 
@@ -368,7 +385,7 @@
             <div class="save-date" id="saveDate">
                 <!-- <h3>Save the Date</h3> -->
 
-                <h5>25 <sup>th</sup> to 27 <sup>th</sup> <br> October 2026</h5>
+                <h5>25 <sup class="th">th</sup>- 27 <sup class="th">th</sup> <br> October 2026</h5>
 
             </div>
 
@@ -379,11 +396,20 @@
 
     <script>
 
+        // Page load hone par top par scroll kare
+        window.onload = function () {
+            window.scrollTo(0, 0);
+        };
+
+        // Browser ki automatic scroll restore ko disable kare
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
         if (!sessionStorage.getItem("pageRefreshed")) {
             sessionStorage.setItem("pageRefreshed", "true");
             location.reload();
         }
-
 
 
         /* =========================================================
