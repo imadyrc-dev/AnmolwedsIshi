@@ -1,0 +1,6 @@
+﻿# Ignore large or generated media files
+music.mpeg.wav
+music.mp3.mpeg
+*.wav
+*.mp3
+*.mp4
