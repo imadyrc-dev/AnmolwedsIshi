@@ -363,7 +363,7 @@
     </section>
 
     <!-- ============ Background music ============ -->
-    <audio id="bgMusic" src="Ishq Hai.mp3.mpeg.mp3" loop preload="auto"></audio>
+    <audio id="bgMusic" src="Ishq Hai.mp3" loop preload="auto"></audio>
     <button class="mute-btn" id="muteBtn" aria-label="Mute music"></button>
 
     <!-- ============ Save the Date (scratch card) ============ -->
@@ -436,23 +436,88 @@
         const muteBtn = document.getElementById("muteBtn");
         let musicMuted = false;
         let musicStarted = false;
+        let audioContext = null;
+        let masterGain = null;
+        let synthTimer = null;
 
-        const startMusic = () => {
+        const ensureAudioContext = () => {
+            if (!audioContext) {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return null;
+                audioContext = new AudioCtx();
+                masterGain = audioContext.createGain();
+                masterGain.gain.value = musicMuted ? 0 : 0.04;
+                masterGain.connect(audioContext.destination);
+            }
+            if (audioContext.state === "suspended") {
+                audioContext.resume();
+            }
+            return audioContext;
+        };
+
+        const stopSynthMusic = () => {
+            if (synthTimer) {
+                clearTimeout(synthTimer);
+                synthTimer = null;
+            }
+        };
+
+        const startSynthMusic = () => {
+            const ctx = ensureAudioContext();
+            if (!ctx || !masterGain) return;
+
+            const notes = [261.63, 329.63, 392.0, 493.88, 392.0, 329.63];
+            const playNote = (note, time, length = 0.35) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(note, time);
+                gain.gain.setValueAtTime(0.001, time);
+                gain.gain.exponentialRampToValueAtTime(0.025, time + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + length);
+                osc.connect(gain);
+                gain.connect(masterGain);
+                osc.start(time);
+                osc.stop(time + length);
+            };
+
+            const loopSequence = () => {
+                const now = ctx.currentTime;
+                notes.forEach((note, index) => playNote(note, now + index * 0.3));
+                synthTimer = window.setTimeout(loopSequence, 1800);
+            };
+
+            loopSequence();
+        };
+
+        const setMusicMuted = (muted) => {
+            musicMuted = muted;
+            if (masterGain) {
+                masterGain.gain.value = muted ? 0 : 0.04;
+            }
+            if (bgMusic) {
+                bgMusic.muted = muted;
+            }
+        };
+
+        const startMusic = async () => {
             if (musicStarted) return;
             musicStarted = true;
 
-            bgMusic.currentTime = 0;
-            bgMusic.play().catch(() => {
-                // Autoplay-with-sound can still be blocked; fail silently and let
-                // the visitor use the mute/unmute button to retry.
-            });
             muteBtn.style.display = "flex";
-            muteBtn.textContent = "🔊";   // was missing — button had no icon initially
+            muteBtn.textContent = "🔊";
+
+            try {
+                bgMusic.currentTime = 0;
+                await bgMusic.play();
+            } catch (error) {
+                stopSynthMusic();
+                startSynthMusic();
+            }
         };
 
         muteBtn.addEventListener("click", () => {
-            musicMuted = !musicMuted;
-            bgMusic.muted = musicMuted;
+            setMusicMuted(!musicMuted);
             muteBtn.textContent = musicMuted ? "🔇" : "🔊";
         });
 
