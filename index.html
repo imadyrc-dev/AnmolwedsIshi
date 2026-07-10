@@ -92,9 +92,10 @@
             inset: 0;
             background: var(--overlay-dark);
             display: flex;
-            justify-content: end;
+            justify-content: flex-start;
             align-items: center;
             flex-direction: column;
+            padding-top: 10vh;
             color: #fff;
             transition: opacity .4s;
         }
@@ -118,7 +119,7 @@
             color: var(--color-script);
             letter-spacing: 1px;
             margin-top: 30px;
-            margin-bottom: 70px;
+
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.35);
         }
 
@@ -128,6 +129,7 @@
             border-radius: 50%;
             border: none;
             cursor: pointer;
+            margin-bottom: 70px;
             background: #fff;
             backdrop-filter: blur(10px);
             color: #ff0000;
@@ -393,8 +395,8 @@
         </video>
 
         <div class="overlay" id="overlay">
-            <button class="play-btn" id="playBtn">💗</button>
             <p>Open Invitation</p>
+            <button class="play-btn" id="playBtn">💗</button>
         </div>
     </section>
 
