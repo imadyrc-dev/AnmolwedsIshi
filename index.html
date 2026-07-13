@@ -24,7 +24,7 @@
         .Yashraj {
             color: white;
             text-shadow: 2px 2px 4px #000;
-            font-size: 15px;
+            font-size: 11px;
             text-decoration: none;
         }
 
@@ -253,10 +253,21 @@
             border-radius: 0;
             box-shadow: none;
 
-            background-image: url('003.png');
+            background-image: url('best.jpeg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+        }
+
+        .scratch-card p {
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 0;
+            z-index: 10;
+            text-align: center;
+            width: auto;
         }
 
         .heart-backdrop {
@@ -310,13 +321,13 @@
 
         .save-date h5 {
             font-family: 'Montserrat', sans-serif;
-            font-size: 25px;
+            font-size: 20px;
             font-weight: bolder;
             color: #aa4400;
             text-align: center;
             letter-spacing: 1px;
-            margin-top: 5px;
-            transform: translateY(-15px);
+            margin-top: 10px;
+            transform: translateY(-10px);
             text-shadow:
                 0 2px 6px rgba(0, 0, 0, 0.2),
                 0 0 10px rgba(212, 175, 55, 0.3);
@@ -436,7 +447,7 @@
             <div class="save-date" id="saveDate">
                 <!-- <h3>Save the Date</h3> -->
 
-                <h5>25 <sup class="th">th</sup>- 27 <sup class="th">th</sup> <br> October 2026</h5>
+                <h5> 25<sup class="th">th</sup>- 27<sup class="th">th</sup><br>October 2026</h5>
 
             </div>
 
@@ -674,7 +685,7 @@
 
             const cx = canvasWidth / 2;
             const cy = canvasHeight * 0.65; /* Heart moved a bit higher */
-            const scale = Math.min(canvasWidth / 28, canvasHeight / 26) * 0.5;
+            const scale = Math.min(canvasWidth / 28, canvasHeight / 26) * 0.4;
 
             const pts = heartPoints(cx, cy, scale);
 
