@@ -253,7 +253,7 @@
             border-radius: 0;
             box-shadow: none;
 
-            background-image: url('changenew.jpeg');
+            background-image: url('002.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -291,24 +291,35 @@
 
         .save-date h3 {
             font-family: 'Great Vibes', cursive;
-            font-size: 30px;
-            color: #D4AF37;
+            font-size: 52px;
             font-weight: 400;
-            letter-spacing: 1px;
             text-align: center;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            margin-bottom: 8px;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            line-height: 1.1;
+
+            background: linear-gradient(180deg, #FFF6D5 0%, #F7D774 45%, #D4AF37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            text-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.15),
+                0 0 12px rgba(212, 175, 55, 0.45),
+                0 0 25px rgba(212, 175, 55, 0.25);
         }
 
         .save-date h5 {
             font-family: 'Great Vibes', cursive;
-            font-size: 28px !important;
-            color: #8B5E3C;
+            font-size: 30px;
             font-weight: 400;
+            color: #aa4400;
             text-align: center;
-            position: relative;
-            top: 0;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            margin-top: 5px;
+            transform: translateY(-18px);
+            text-shadow:
+                0 2px 6px rgba(0, 0, 0, 0.2),
+                0 0 10px rgba(212, 175, 55, 0.3);
         }
 
 
@@ -429,7 +440,7 @@
 
             </div>
 
-            <div class="scratch-hint" id="scratchHint">Scratch the heart ✨</div>
+            <!-- <div class="scratch-hint" id="scratchHint">Scratch the heart ✨</div> -->
             <canvas id="scratchCanvas"></canvas>
             <canvas id="particleCanvas"></canvas>
             <p><a class="Yashraj" href="tel:+919829446940">Yashraj Creations</a></p>
