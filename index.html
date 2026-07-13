@@ -21,6 +21,13 @@
             scroll-behavior: smooth;
         }
 
+        .Yashraj {
+            color: white;
+            text-shadow: 2px 2px 4px #000;
+            font-size: 15px;
+            text-decoration: none;
+        }
+
         /* =========================================================
            Design tokens
         ========================================================= */
@@ -242,11 +249,11 @@
             position: relative;
             overflow: hidden;
             width: 100%;
-            height: 95%;
+            height: 100%;
             border-radius: 0;
             box-shadow: none;
 
-            background-image: url('newimg\ 1.jpg');
+            background-image: url('changenew.jpeg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -425,11 +432,12 @@
             <div class="scratch-hint" id="scratchHint">Scratch the heart ✨</div>
             <canvas id="scratchCanvas"></canvas>
             <canvas id="particleCanvas"></canvas>
+            <p><a class="Yashraj" href="tel:+919829446940">Yashraj Creations</a></p>
         </div>
+
     </section>
 
     <script>
-
         // Page load hone par top par scroll kare
         window.onload = function () {
             window.scrollTo(0, 0);
@@ -566,7 +574,7 @@
             startMusic();
         });
 
-        const REVEAL_DELAY_MS = 1500;   // wait for hero fade-out
+        const REVEAL_DELAY_MS = 1500; // wait for hero fade-out
         const SHOW_CLASS_DELAY_MS = 600; // wait for scroll-into-view
 
         /* Video end: fade the hero out, then the next section slides
@@ -578,7 +586,9 @@
             hero.style.opacity = "0";
 
             setTimeout(() => {
-                nextSection.scrollIntoView({ behavior: "smooth" });
+                nextSection.scrollIntoView({
+                    behavior: "smooth"
+                });
 
                 setTimeout(() => {
                     nextSection.classList.add("show");
@@ -595,7 +605,9 @@
                     startMusic();
                 }
             });
-        }, { threshold: 0.3 });
+        }, {
+            threshold: 0.3
+        });
 
         musicObserver.observe(nextSection);
 
@@ -695,7 +707,10 @@
             heartBackdrop.setAttribute("viewBox", `0 0 ${canvasWidth} ${canvasHeight}`);
             heartBackdropPath.setAttribute("d", pointsToSvgPath(pts));
 
-            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            let minX = Infinity,
+                maxX = -Infinity,
+                minY = Infinity,
+                maxY = -Infinity;
             pts.forEach(([x, y]) => {
                 if (x < minX) minX = x;
                 if (x > maxX) maxX = x;
@@ -750,7 +765,10 @@
 
         function getRelativePos(clientX, clientY) {
             const rect = canvas.getBoundingClientRect();
-            return { x: clientX - rect.left, y: clientY - rect.top };
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
         }
 
         function startScratch(x, y) {
@@ -788,7 +806,9 @@
             const t = e.touches[0];
             const p = getRelativePos(t.clientX, t.clientY);
             startScratch(p.x, p.y);
-        }, { passive: false });
+        }, {
+            passive: false
+        });
 
         canvas.addEventListener("touchend", endScratch);
 
@@ -799,7 +819,9 @@
             const p = getRelativePos(t.clientX, t.clientY);
             scratchStroke(p.x, p.y);
             checkScratchProgress();
-        }, { passive: false });
+        }, {
+            passive: false
+        });
 
         function checkScratchProgress() {
             const pixels = ctx.getImageData(0, 0, canvasWidth, canvasHeight).data;
@@ -874,7 +896,10 @@
             pctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
 
             particles.forEach((p) => {
-                p.trail.push({ x: p.x, y: p.y });
+                p.trail.push({
+                    x: p.x,
+                    y: p.y
+                });
                 if (p.trail.length > 6) p.trail.shift();
 
                 // Gentle gravity + air drag, the way a real spark decelerates
@@ -941,8 +966,8 @@
         let fireworksAnimHandle = null;
 
         const FIREWORK_COLORS = ["#FFFFFF", "#FFF6D9", "#FFE8A3", "#F8E8A0", "#E7C95B", "#D4AF37"];
-        const FIREWORKS_SHOW_MS = 2600;   // total time bursts keep launching
-        const FIREWORKS_FADE_MS = 900;    // fade-out duration after the show
+        const FIREWORKS_SHOW_MS = 2600; // total time bursts keep launching
+        const FIREWORKS_FADE_MS = 900; // fade-out duration after the show
 
         function sizeFireworksCanvas() {
             fireworksCanvas.width = window.innerWidth;
@@ -972,7 +997,10 @@
             fctx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
 
             fireworkParticles.forEach((p) => {
-                p.trail.push({ x: p.x, y: p.y });
+                p.trail.push({
+                    x: p.x,
+                    y: p.y
+                });
                 if (p.trail.length > 7) p.trail.shift();
 
                 // Light drag + gravity so each spark arcs and drifts
